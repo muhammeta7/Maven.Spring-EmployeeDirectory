@@ -39,7 +39,6 @@ public class EmployeeController {
         return new ResponseEntity<>(service.getEmployeesByDepartment(deptNumber),HttpStatus.OK);
     }
 
-
     // UPDATE
     //===============================================================================================================
     @PutMapping("/API/employees/updateFirstName/{id}")

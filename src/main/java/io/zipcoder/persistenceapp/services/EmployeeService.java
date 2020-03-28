@@ -91,9 +91,9 @@ public class EmployeeService {
     }
 
     // TODO Get the list of employees under a particular manager
-    public Iterable<Employee> getEmployeesByManager(Integer managerId){
-        return null;
-    }
+//    public Iterable<Employee> getEmployeesByManager(Integer managerId){
+//        return null;
+//    }
 
     // TODO Get all employees who report directly or indirectly to a particular manager
 
