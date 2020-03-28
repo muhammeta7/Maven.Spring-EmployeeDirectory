@@ -82,6 +82,22 @@ public class EmployeeService {
         return repo.findAll();
     }
 
+    public Employee getManager(Integer id){
+        return repo.findOne(id).getManager();
+    }
+
+    public Integer getDepartment(Integer id){
+        return repo.findOne(id).getDepartmentNumber();
+    }
+
+    public String getTitle(Integer id){
+        return repo.findOne(id).getTitle();
+    }
+
+    public String getEmail(Integer id){
+        return repo.findOne(id).getEmail();
+    }
+
     // Get the list of employees of a particular department
     public ArrayList<Employee> getEmployeesByDepartment(Integer deptNumber){
         ArrayList<Employee> employees = (ArrayList<Employee>) findAllEmployees();
@@ -90,17 +106,20 @@ public class EmployeeService {
                 .collect(Collectors.toList());
     }
 
-    // TODO Get the list of employees under a particular manager
-    public Iterable<Employee> getEmployeesByManager(Integer managerId){
-        return null;
+    // Get the list of employees under a particular manager
+    public ArrayList<Employee> getEmployeesByManager(Integer managerId){
+        ArrayList<Employee> employees = (ArrayList<Employee>) findAllEmployees();
+        ArrayList<Employee> empsByManager = new ArrayList<>();
+        for (Employee e : employees) {
+            if(e.getManager() != null){
+                if(e.getManager().getId() == managerId){
+                    empsByManager.add(e);
+                }
+            }
+
+        }
+        return empsByManager;
     }
-
-    // TODO Get all employees who report directly or indirectly to a particular manager
-
-    // TODO Get a list of employees with no assigned manager
-
-    // TODO Get the entire reporting hierarchy for an employee (their manager + manager's manager etc.)
-
 
     // DELETE - Remove a particular employee
     //===============================================================================================================
@@ -109,10 +128,14 @@ public class EmployeeService {
         return true;
     }
 
-    // TODO Remove a particular employee or list of employees
+    // Remove a particular employee or list of employees
+    public boolean removeEmployeeFromDept(Integer deptNumber, Integer num){
+        getEmployeesByDepartment(num).stream().forEach(e -> {
+            e.setDepartmentNumber(num);
+            repo.save(e);
+        });
+        return true;
+    }
 
-    // TODO Remove all employees under a particular manager (Including indirect reports)
-
-    // TODO Remove all direct reports to a manager. Any employees previously managed by the deleted employees should now be managed by the next manager up the hierarchy.
 
 }

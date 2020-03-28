@@ -39,6 +39,31 @@ public class EmployeeController {
         return new ResponseEntity<>(service.getEmployeesByDepartment(deptNumber),HttpStatus.OK);
     }
 
+    @GetMapping("/API/employees/manager/{id}")
+    public ResponseEntity<Employee> getEmployeeManager(@PathVariable Integer id){
+        return new ResponseEntity<>(service.getManager(id),HttpStatus.OK);
+    }
+
+    @GetMapping
+    @RequestMapping("/API/employees/manager/getDirectReports/{id}")
+    public ResponseEntity<ArrayList<Employee>> getDirectReports(@PathVariable Integer id){
+        return new ResponseEntity<>(service.getEmployeesByManager(id),HttpStatus.OK);
+    }
+
+    @RequestMapping("/API/employees/getDepartment/{id}")
+    public ResponseEntity<Integer> getEmployeeDepartment(@PathVariable Integer id){
+        return new ResponseEntity<>(service.getDepartment(id),HttpStatus.OK);
+    }
+
+    @RequestMapping("/API/employees/getTitle/{id}")
+    public ResponseEntity<String> getEmployeeTitle(@PathVariable Integer id){
+        return new ResponseEntity<>(service.getTitle(id),HttpStatus.OK);
+    }
+
+    @RequestMapping("/API/employees/getEmail/{id}")
+    public ResponseEntity<String> getEmployeeEmail(@PathVariable Integer id){
+        return new ResponseEntity<>(service.getEmail(id),HttpStatus.OK);
+    }
 
     // UPDATE
     //===============================================================================================================
@@ -80,6 +105,11 @@ public class EmployeeController {
     @PutMapping("/API/employees/updateDepartment/{id}")
     public ResponseEntity<Employee> updateDepartment(@RequestParam Integer departmentId, @PathVariable Integer id){
         return new ResponseEntity<>(service.updateDepartment(id, departmentId), HttpStatus.OK);
+    }
+
+    @PutMapping("API/employees/removeFromDepartment/{num}")
+    public ResponseEntity<Boolean> removeDeptFromEmps(@PathVariable Integer num, @RequestParam Integer newDepartment){
+        return new ResponseEntity<>(service.removeEmployeeFromDept(num, newDepartment),HttpStatus.OK);
     }
 
     // DELETE

@@ -7,19 +7,19 @@ import java.time.LocalDate;
 public class Employee {
 
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id")
     private Integer id;
+
     private String firstName;
     private String lastName;
     private String title;
     private String phoneNumber;
     private String email;
     private String hireDate;
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "manager_id", referencedColumnName = "id")
-    private Employee  manager;
-    @Column(name = "DEPT_NUMBER")
     private Integer departmentNumber;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    private Employee  manager;
+
 
     public Employee() {
     }
@@ -43,7 +43,6 @@ public class Employee {
         this.id = id;
     }
 
-    @Column(name = "FIRST_NAME")
     public String getFirstName() {
         return firstName;
     }
@@ -52,7 +51,6 @@ public class Employee {
         this.firstName = firstName;
     }
 
-    @Column(name = "LAST_NAME")
     public String getLastName() {
         return lastName;
     }
