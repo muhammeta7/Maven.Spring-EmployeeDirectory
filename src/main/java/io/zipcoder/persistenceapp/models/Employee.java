@@ -7,39 +7,40 @@ import java.time.LocalDate;
 public class Employee {
 
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "ID")
-    private Integer employeeId;
+    @Column(name = "id")
+    private Integer id;
     private String firstName;
     private String lastName;
     private String title;
     private String phoneNumber;
     private String email;
     private String hireDate;
-    private Integer managerId;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "manager_id", referencedColumnName = "id")
+    private Employee  manager;
     @Column(name = "DEPT_NUMBER")
     private Integer departmentNumber;
 
     public Employee() {
     }
 
-    public Employee(String firstName, String lastName, String title, String phoneNumber, String email, String hireDate, Integer managerId, Integer departmentNumber) {
+    public Employee(String firstName, String lastName, String title, String phoneNumber, String email, String hireDate, Employee managerId, Integer departmentNumber) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.title = title;
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.hireDate = hireDate;
-        this.managerId = managerId;
+        this.manager = managerId;
         this.departmentNumber = departmentNumber;
     }
 
-
-    public Integer getEmployeeId() {
-        return employeeId;
+    public Integer getId() {
+        return id;
     }
 
-    public void setEmployeeId(Integer employeeId) {
-        this.employeeId = employeeId;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     @Column(name = "FIRST_NAME")
@@ -60,7 +61,7 @@ public class Employee {
         this.lastName = lastName;
     }
 
-    @Column(name = "TITLE")
+
     public String getTitle() {
         return title;
     }
@@ -69,7 +70,7 @@ public class Employee {
         this.title = title;
     }
 
-    @Column(name = "PHONE_NUMBER")
+
     public String getPhoneNumber() {
         return phoneNumber;
     }
@@ -78,7 +79,7 @@ public class Employee {
         this.phoneNumber = phoneNumber;
     }
 
-    @Column(name = "EMAIL")
+
     public String getEmail() {
         return email;
     }
@@ -87,7 +88,7 @@ public class Employee {
         this.email = email;
     }
 
-    @Column(name = "HIRE_DATE")
+
     public String getHireDate() {
         return hireDate;
     }
@@ -96,13 +97,12 @@ public class Employee {
         this.hireDate = hireDate;
     }
 
-    @Column(name = "MANAGER_ID")
-    public Integer getManagerId() {
-        return managerId;
+    public Employee getManager() {
+        return manager;
     }
 
-    public void setManagerId(Integer managerId) {
-        this.managerId = managerId;
+    public void setManager(Employee manager) {
+        this.manager = manager;
     }
 
     public void setDepartmentNumber(Integer departmentNumber) {

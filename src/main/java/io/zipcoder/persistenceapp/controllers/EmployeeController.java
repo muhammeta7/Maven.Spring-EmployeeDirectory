@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+
 @RestController
 public class EmployeeController {
 
@@ -14,12 +16,14 @@ public class EmployeeController {
     EmployeeService service;
 
     // POST
+    //===============================================================================================================
     @PostMapping("/API/employees/create")
     public ResponseEntity<Employee> createEmployee(@RequestBody Employee e){
         return new ResponseEntity<>(service.create(e), HttpStatus.CREATED);
     }
 
     // GET
+    //===============================================================================================================
     @GetMapping("/API/employees/{id}")
     public ResponseEntity<Employee> findEmployeeById(@PathVariable Integer id){
         return new ResponseEntity<>(service.findEmployeeById(id), HttpStatus.OK);
@@ -30,8 +34,14 @@ public class EmployeeController {
         return new ResponseEntity<>(service.findAllEmployees(), HttpStatus.OK);
     }
 
+    @GetMapping("API/employees/department/{deptNumber}")
+    public ResponseEntity<ArrayList<Employee>> getEmployeesByDept(@PathVariable Integer deptNumber){
+        return new ResponseEntity<>(service.getEmployeesByDepartment(deptNumber),HttpStatus.OK);
+    }
+
 
     // UPDATE
+    //===============================================================================================================
     @PutMapping("/API/employees/updateFirstName/{id}")
     public ResponseEntity<Employee> updateFirst(@RequestParam String firstName, @PathVariable Integer id){
         return new ResponseEntity<>(service.updateFirstName(id,firstName), HttpStatus.OK);
@@ -63,8 +73,8 @@ public class EmployeeController {
     }
 
     @PutMapping("/API/employees/updateManager/{id}")
-    public ResponseEntity<Employee> updateManager(@RequestParam Integer managerId, @PathVariable Integer id){
-        return new ResponseEntity<>(service.updateManagerId(id,managerId), HttpStatus.OK);
+    public ResponseEntity<Employee> updateManager(@RequestParam Employee manager, @PathVariable Integer id){
+        return new ResponseEntity<>(service.updateManager(id,manager), HttpStatus.OK);
     }
 
     @PutMapping("/API/employees/updateDepartment/{id}")
@@ -73,6 +83,7 @@ public class EmployeeController {
     }
 
     // DELETE
+    //===============================================================================================================
     @DeleteMapping("/API/employees/{id}")
     public ResponseEntity<Boolean> deleteEmployee(@PathVariable Integer id){
         return new ResponseEntity<>(service.deleteEmployee(id), HttpStatus.NOT_FOUND);

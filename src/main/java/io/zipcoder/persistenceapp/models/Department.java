@@ -6,37 +6,41 @@ import javax.persistence.*;
 public class Department {
 
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer departmentId;
-    private String name;
-    private Integer managerId;
+    @Column(name = "dept_number")
+    private Integer dept_number;
+    private String dept_name;
+    @OneToOne(cascade = CascadeType.ALL)
+    private Employee manager;
 
     public Department() {
     }
 
-    @Column(name = "MANAGER_ID")
-    public Integer getManagerId() {
-        return managerId;
+    public Department(String deptName, Employee manager){
+        this.dept_name = deptName;
+        this.manager = manager;
     }
 
-    public void setManagerId(Integer managerId) {
-        this.managerId = managerId;
+    public Integer getDept_num() {
+        return dept_number;
     }
 
-    @Column(name = "DEPT_NUM")
-    public Integer getDepartmentNumber() {
-        return departmentId;
+    public void setDept_num(Integer dept_num) {
+        this.dept_number = dept_num;
     }
 
-    public void setDepartmentNumber(Integer departmentNumber) {
-        this.departmentId = departmentNumber;
+    public String getDept_name() {
+        return dept_name;
     }
 
-    @Column(name = "DEPT_NAME")
-    public String getName() {
-        return name;
+    public void setDept_name(String dept_name) {
+        this.dept_name = dept_name;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public Employee getDeptManager() {
+        return manager;
+    }
+
+    public void setDeptManager(Employee manager) {
+        this.manager = manager;
     }
 }
