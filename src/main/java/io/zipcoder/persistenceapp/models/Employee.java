@@ -1,29 +1,28 @@
 package io.zipcoder.persistenceapp.models;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity
 public class Employee {
 
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "ID")
     private Integer employeeId;
     private String firstName;
     private String lastName;
     private String title;
     private String phoneNumber;
     private String email;
-    private LocalDate hireDate;
+    private String hireDate;
     private Integer managerId;
+    @Column(name = "DEPT_NUMBER")
     private Integer departmentNumber;
 
     public Employee() {
     }
 
-    public Employee(String firstName, String lastName, String title, String phoneNumber, String email, LocalDate hireDate, Integer managerId, Integer departmentNumber) {
+    public Employee(String firstName, String lastName, String title, String phoneNumber, String email, String hireDate, Integer managerId, Integer departmentNumber) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.title = title;
@@ -33,6 +32,7 @@ public class Employee {
         this.managerId = managerId;
         this.departmentNumber = departmentNumber;
     }
+
 
     public Integer getEmployeeId() {
         return employeeId;
@@ -42,6 +42,7 @@ public class Employee {
         this.employeeId = employeeId;
     }
 
+    @Column(name = "FIRST_NAME")
     public String getFirstName() {
         return firstName;
     }
@@ -50,6 +51,7 @@ public class Employee {
         this.firstName = firstName;
     }
 
+    @Column(name = "LAST_NAME")
     public String getLastName() {
         return lastName;
     }
@@ -58,6 +60,7 @@ public class Employee {
         this.lastName = lastName;
     }
 
+    @Column(name = "TITLE")
     public String getTitle() {
         return title;
     }
@@ -66,6 +69,7 @@ public class Employee {
         this.title = title;
     }
 
+    @Column(name = "PHONE_NUMBER")
     public String getPhoneNumber() {
         return phoneNumber;
     }
@@ -74,6 +78,7 @@ public class Employee {
         this.phoneNumber = phoneNumber;
     }
 
+    @Column(name = "EMAIL")
     public String getEmail() {
         return email;
     }
@@ -82,14 +87,16 @@ public class Employee {
         this.email = email;
     }
 
-    public LocalDate getHireDate() {
+    @Column(name = "HIRE_DATE")
+    public String getHireDate() {
         return hireDate;
     }
 
-    public void setHireDate(LocalDate hireDate) {
+    public void setHireDate(String hireDate) {
         this.hireDate = hireDate;
     }
 
+    @Column(name = "MANAGER_ID")
     public Integer getManagerId() {
         return managerId;
     }
@@ -98,11 +105,11 @@ public class Employee {
         this.managerId = managerId;
     }
 
-    public Integer getDepartmentNumber() {
-        return departmentNumber;
-    }
-
     public void setDepartmentNumber(Integer departmentNumber) {
         this.departmentNumber = departmentNumber;
+    }
+
+    public Integer getDepartmentNumber() {
+        return departmentNumber;
     }
 }
