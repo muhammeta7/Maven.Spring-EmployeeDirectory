@@ -43,14 +43,15 @@ public class DepartmentService {
         return repo.save(originalDept);
     }
 
-    // TODO Set a new department manager
-//    public Department updateManager(Integer id, Integer managerId){
-//        Department original = findDepartmentById(id);
-//        original.setDeptManager();
-//    }
+    // Update Department Manager
+    public Department changeManager(Integer id, Integer managerId){
+        EmployeeService service = new EmployeeService();
+        Department original = repo.findOne(id);
+        Employee manager = service.findEmployeeById(managerId);
+        original.setDeptManager(manager);
+        return repo.save(original);
+    }
 
-    // TODO Merge departments (given two department names eg: A and B, move the manager of B to
-    //  report to the manager of A, and update all other employees to be members of department A)
 
     //DELETE
     //===============================================================================================================

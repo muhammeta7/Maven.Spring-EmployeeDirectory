@@ -8,16 +8,17 @@ public class Employee {
 
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
+
     private String firstName;
     private String lastName;
     private String title;
     private String phoneNumber;
     private String email;
     private String hireDate;
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "manager_id", referencedColumnName = "id")
-    private Employee  manager;
     private Integer departmentNumber;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    private Employee  manager;
 
     public Employee() {
     }

@@ -42,12 +42,15 @@ public class DepartmentController {
         return new ResponseEntity<>(service.updateDepartmentName(id,name), HttpStatus.OK);
     }
 
+    @PutMapping("/API/dept/updateManager/{deptId}")
+    public ResponseEntity<Department> updateManager(@RequestParam Integer managerId, @PathVariable Integer deptId){
+        return new ResponseEntity<>(service.changeManager(deptId,managerId), HttpStatus.OK);
+    }
+
     // DELETE
     @DeleteMapping("/API/departments/{id}")
     public ResponseEntity<Boolean> deleteEmployee(@PathVariable Integer id){
         return new ResponseEntity<>(service.deleteDepartment(id), HttpStatus.NOT_FOUND);
     }
-
-
 
 }
