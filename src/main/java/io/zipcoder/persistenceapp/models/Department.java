@@ -6,12 +6,11 @@ import javax.persistence.*;
 public class Department {
 
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
-    @JoinColumn(name = "Employee")
     private Integer dept_number;
 
     private String dept_name;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     private Employee manager;
 
     public Department() {

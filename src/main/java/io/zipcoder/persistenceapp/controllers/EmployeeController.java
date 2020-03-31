@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 public class EmployeeController {
@@ -44,25 +45,35 @@ public class EmployeeController {
         return new ResponseEntity<>(service.getManager(id),HttpStatus.OK);
     }
 
+    @RequestMapping("API/employees/getByManager/{managerId}")
+    public ResponseEntity<ArrayList<Employee>> getEmployeesByManager(@PathVariable Integer managerId){
+        return new ResponseEntity<>(service.getEmployeesByManagerId(managerId),HttpStatus.OK);
+    }
+
     @GetMapping
     @RequestMapping("/API/employees/manager/getDirectReports/{id}")
     public ResponseEntity<ArrayList<Employee>> getDirectReports(@PathVariable Integer id){
-        return new ResponseEntity<>(service.getEmployeesByManager(id),HttpStatus.OK);
+        return new ResponseEntity<>(service.getAllDirectReports(id),HttpStatus.OK);
     }
 
-    @RequestMapping("/API/employees/getDepartment/{id}")
+    @GetMapping("/API/employees/getDepartment/{id}")
     public ResponseEntity<Integer> getEmployeeDepartment(@PathVariable Integer id){
         return new ResponseEntity<>(service.getDepartment(id),HttpStatus.OK);
     }
 
-    @RequestMapping("/API/employees/getTitle/{id}")
+    @GetMapping("/API/employees/getTitle/{id}")
     public ResponseEntity<String> getEmployeeTitle(@PathVariable Integer id){
         return new ResponseEntity<>(service.getTitle(id),HttpStatus.OK);
     }
 
-    @RequestMapping("/API/employees/getEmail/{id}")
+    @GetMapping("/API/employees/getEmail/{id}")
     public ResponseEntity<String> getEmployeeEmail(@PathVariable Integer id){
         return new ResponseEntity<>(service.getEmail(id),HttpStatus.OK);
+    }
+
+    @GetMapping("/API/employees/getAllManagers/{id}")
+    public ResponseEntity<ArrayList<Employee>> getReportingHierarchy(@PathVariable Integer id){
+        return new ResponseEntity<>(service.findHierarchy(id),HttpStatus.OK);
     }
 
 
@@ -108,9 +119,14 @@ public class EmployeeController {
         return new ResponseEntity<>(service.updateDepartment(id, departmentId), HttpStatus.OK);
     }
 
-    @PutMapping("API/employees/removeFromDepartment/{num}")
-    public ResponseEntity<Boolean> removeDeptFromEmps(@PathVariable Integer num, @RequestParam Integer newDepartment){
-        return new ResponseEntity<>(service.removeEmployeeFromDept(num, newDepartment),HttpStatus.OK);
+    @PutMapping("API/employees/removeByDepartment/{deptNum}")
+    public ResponseEntity<Boolean> removeEmployeeByDept(@PathVariable Integer deptNum, @RequestParam Integer newDept){
+        return new ResponseEntity<>(service.removeEmployeeFromDept(deptNum, newDept),HttpStatus.OK);
+    }
+
+    @PutMapping("/API/employees/changeManager/{oldId}")
+    public ResponseEntity<List<Employee>> changeManager(@PathVariable Integer oldId, @RequestParam Integer newId){
+        return new ResponseEntity<>(service.changeEmployeeManager(oldId,newId),HttpStatus.OK);
     }
 
     // DELETE
@@ -119,6 +135,7 @@ public class EmployeeController {
     public ResponseEntity<Boolean> deleteEmployee(@PathVariable Integer id){
         return new ResponseEntity<>(service.deleteEmployee(id), HttpStatus.NOT_FOUND);
     }
+
 
 }
 
