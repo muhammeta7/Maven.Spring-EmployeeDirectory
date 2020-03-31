@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 public class EmployeeController {
@@ -45,7 +46,7 @@ public class EmployeeController {
         return new ResponseEntity<>(service.getManager(id),HttpStatus.OK);
     }
 
-    @RequestMapping("API/employees/getByManager/{managerId}")
+    @GetMapping("API/employees/getByManager/{managerId}")
     public ResponseEntity<ArrayList<Employee>> getEmployeesByManager(@PathVariable Integer managerId){
         return new ResponseEntity<>(service.getEmployeesByManagerId(managerId),HttpStatus.OK);
     }
@@ -76,6 +77,10 @@ public class EmployeeController {
         return new ResponseEntity<>(service.findHierarchy(id),HttpStatus.OK);
     }
 
+    @GetMapping("/API/employees/findByManager/includeIndirect/{managerId}")
+    public ResponseEntity<Set<Employee>> findByManagerIncIndirect(@PathVariable Integer managerId) {
+        return new ResponseEntity<>(service.findAllByManagerIncIndirect(managerId), HttpStatus.OK);
+    }
 
     // UPDATE
     //===============================================================================================================
@@ -109,11 +114,6 @@ public class EmployeeController {
         return new ResponseEntity<>(service.updateHireDate(id,hireDate), HttpStatus.OK);
     }
 
-    @PutMapping("/API/employees/updateManager/{id}")
-    public ResponseEntity<Employee> updateManager(@RequestParam Employee manager, @PathVariable Integer id){
-        return new ResponseEntity<>(service.updateManager(id,manager), HttpStatus.OK);
-    }
-
     @PutMapping("/API/employees/updateDepartment/{id}")
     public ResponseEntity<Employee> updateDepartment(@RequestParam Integer departmentId, @PathVariable Integer id){
         return new ResponseEntity<>(service.updateDepartment(id, departmentId), HttpStatus.OK);
@@ -122,6 +122,11 @@ public class EmployeeController {
     @PutMapping("API/employees/removeByDepartment/{deptNum}")
     public ResponseEntity<Boolean> removeEmployeeByDept(@PathVariable Integer deptNum, @RequestParam Integer newDept){
         return new ResponseEntity<>(service.removeEmployeeFromDept(deptNum, newDept),HttpStatus.OK);
+    }
+
+    @PutMapping("/API/emp/updateManager/{id}")
+    public ResponseEntity<Employee> updateManager(@RequestParam Integer managerId,@PathVariable Integer id){
+        return new ResponseEntity<>(service.updateManager(id,managerId), HttpStatus.OK);
     }
 
     @PutMapping("/API/employees/changeManager/{oldId}")

@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 @Service
@@ -67,13 +69,12 @@ public class EmployeeService {
     }
 
     // Update an employee to set their manager
-    public Employee updateManager(Integer id, Employee manager){
+    public Employee updateManager(Integer id, Integer managerId){
         Employee originalEmployee = repo.findOne(id);
-        originalEmployee.setManager(manager);
+        originalEmployee.setManager(repo.findOne(managerId));
         return repo.save(originalEmployee);
     }
-
-    // Update employee manager
+    //  Update an employee to set their manager
     public List<Employee> changeEmployeeManager(Integer oldId, Integer newId){
         List<Employee> employeeList = repo.findAllByManagerId(oldId);
         Employee newManager = repo.findOne(newId);
@@ -81,6 +82,8 @@ public class EmployeeService {
         repo.save(employeeList);
         return employeeList;
     }
+
+
 
 
     // GET
@@ -147,6 +150,17 @@ public class EmployeeService {
             employee = manager;
         }
         return managers;
+    }
+
+    // Get Employees By Indirect
+    public Set<Employee> findAllByManagerIncIndirect(Integer managerId) {
+        Set<Employee> employees = new TreeSet<>();
+        for (Employee employee : findAllEmployees()) {
+            if (findHierarchy(employee.getId()).contains(findEmployeeById(managerId))) {
+                employees.add(employee);
+            }
+        }
+        return employees;
     }
 
     // DELETE - Remove a particular employee
