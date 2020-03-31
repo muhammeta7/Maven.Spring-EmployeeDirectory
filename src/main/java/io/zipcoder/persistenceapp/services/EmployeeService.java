@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -72,6 +73,16 @@ public class EmployeeService {
         return repo.save(originalEmployee);
     }
 
+    // Update employee manager
+    public List<Employee> changeEmployeeManager(Integer oldId, Integer newId){
+        List<Employee> employeeList = repo.findAllByManagerId(oldId);
+        Employee newManager = repo.findOne(newId);
+        employeeList.forEach(e -> e.setManager(newManager));
+        repo.save(employeeList);
+        return employeeList;
+    }
+
+
     // GET
     //===============================================================================================================
     public Employee findEmployeeById(Integer id){
@@ -106,8 +117,8 @@ public class EmployeeService {
                 .collect(Collectors.toList());
     }
 
-    // Get the list of employees under a particular manager
-    public ArrayList<Employee> getEmployeesByManager(Integer managerId){
+    // Get all Directory Reports
+    public ArrayList<Employee> getAllDirectReports(Integer managerId){
         ArrayList<Employee> employees = (ArrayList<Employee>) findAllEmployees();
         ArrayList<Employee> empsByManager = new ArrayList<>();
         for (Employee e : employees) {
@@ -119,6 +130,23 @@ public class EmployeeService {
 
         }
         return empsByManager;
+    }
+
+    // Get all employees by manager
+    public ArrayList<Employee> getEmployeesByManagerId(Integer managerId){
+        return (ArrayList<Employee>) repo.findAllByManagerId(managerId);
+    }
+
+    // Get Employee Hierarchy
+    public ArrayList<Employee> findHierarchy(Integer id) {
+        ArrayList<Employee> managers = new ArrayList<>();
+        Employee employee = findEmployeeById(id);
+        while (employee.getManager() != null) {
+            Employee manager = employee.getManager();
+            managers.add(manager);
+            employee = manager;
+        }
+        return managers;
     }
 
     // DELETE - Remove a particular employee

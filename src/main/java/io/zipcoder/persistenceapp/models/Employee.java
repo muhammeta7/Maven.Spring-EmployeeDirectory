@@ -15,9 +15,11 @@ public class Employee {
     private String phoneNumber;
     private String email;
     private String hireDate;
-    private Integer departmentNumber;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "dept_number")
+    private Integer dept_number;
+
+    @ManyToOne
     private Employee  manager;
 
     public Employee() {
@@ -31,7 +33,7 @@ public class Employee {
         this.email = email;
         this.hireDate = hireDate;
         this.manager = managerId;
-        this.departmentNumber = departmentNumber;
+        this.dept_number = departmentNumber;
     }
 
     public Integer getId() {
@@ -103,10 +105,10 @@ public class Employee {
     }
 
     public void setDepartmentNumber(Integer departmentNumber) {
-        this.departmentNumber = departmentNumber;
+        this.dept_number = departmentNumber;
     }
 
     public Integer getDepartmentNumber() {
-        return departmentNumber;
+        return dept_number;
     }
 }
