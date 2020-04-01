@@ -7,8 +7,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class EmployeeController {
@@ -19,15 +23,29 @@ public class EmployeeController {
     // POST
     //===============================================================================================================
     @PostMapping("/API/employees/create")
-    public ResponseEntity<Employee> createEmployee(@RequestBody Employee e){
-        return new ResponseEntity<>(service.create(e), HttpStatus.CREATED);
+    public ResponseEntity<Employee> createEmployee(@RequestBody Employee emp){
+        Employee newEmp = service.create(emp);
+        try{
+            return ResponseEntity
+                    .created(new URI("/API/employees/create/" + newEmp.getId()))
+                    .body(newEmp);
+        } catch (URISyntaxException e) {
+            return ResponseEntity.status(HttpStatus.MULTI_STATUS.INTERNAL_SERVER_ERROR).build();
+        }
+
     }
 
     // GET
     //===============================================================================================================
     @GetMapping("/API/employees/{id}")
-    public ResponseEntity<Employee> findEmployeeById(@PathVariable Integer id){
-        return new ResponseEntity<>(service.findEmployeeById(id), HttpStatus.OK);
+    public ResponseEntity<?> findEmployeeById(@PathVariable Integer id){
+        return this.service.findEmpById(id)
+                .map(emp -> ResponseEntity
+                            .ok()
+                            .body(emp))
+                        .orElse(ResponseEntity
+                            .notFound()
+                                .build());
     }
 
     @GetMapping("/API/employees/")
@@ -45,9 +63,14 @@ public class EmployeeController {
         return new ResponseEntity<>(service.getManager(id),HttpStatus.OK);
     }
 
-    @RequestMapping("API/employees/getByManager/{managerId}")
+    @GetMapping("API/employees/getByManager/{managerId}")
     public ResponseEntity<ArrayList<Employee>> getEmployeesByManager(@PathVariable Integer managerId){
         return new ResponseEntity<>(service.getEmployeesByManagerId(managerId),HttpStatus.OK);
+    }
+
+    @GetMapping( "API/employees/noManager" )
+    public ResponseEntity<Iterable<Employee>> getEmployeesWithoutManager() {
+        return new ResponseEntity<>(service.getEmployeesWhereManagerIsNull(), HttpStatus.OK);
     }
 
     @GetMapping
@@ -71,18 +94,34 @@ public class EmployeeController {
         return new ResponseEntity<>(service.getEmail(id),HttpStatus.OK);
     }
 
-    @GetMapping("/API/employees/getAllManagers/{id}")
+    @GetMapping("/API/employees/getHierarchy/{id}")
     public ResponseEntity<ArrayList<Employee>> getReportingHierarchy(@PathVariable Integer id){
         return new ResponseEntity<>(service.findHierarchy(id),HttpStatus.OK);
     }
 
+    @GetMapping("/API/employees/findByManager/directIndirect/{managerId}")
+    public ResponseEntity<HashSet<Employee>> findByManagerIncludingIndirect(@PathVariable Integer managerId) {
+        return new ResponseEntity<>(service.findAllDirectAndIndirectReports(managerId), HttpStatus.OK);
+    }
 
     // UPDATE
     //===============================================================================================================
     @PutMapping("/API/employees/updateFirstName/{id}")
-    public ResponseEntity<Employee> updateFirst(@RequestParam String firstName, @PathVariable Integer id){
-        return new ResponseEntity<>(service.updateFirstName(id,firstName), HttpStatus.OK);
+    public ResponseEntity<?> updateFirstName(@RequestParam String firstName,@PathVariable Integer id){
+        Optional<Employee> exsistingEmployee = service.findEmpById(id);
+        return exsistingEmployee.map(e -> {
+            e.setFirstName(firstName);
+            try {
+                return ResponseEntity
+                        .ok()
+                        .location(new URI("/API/employees/updateFirstName/" + e.getId()))
+                        .body(e);
+            }catch(URISyntaxException ex) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
+        }).orElse(ResponseEntity.notFound().build());
     }
+
 
     @PutMapping("/API/employees/updateLastname/{id}")
     public ResponseEntity<Employee> updateLast(@RequestParam String lastName, @PathVariable Integer id){
@@ -109,11 +148,6 @@ public class EmployeeController {
         return new ResponseEntity<>(service.updateHireDate(id,hireDate), HttpStatus.OK);
     }
 
-    @PutMapping("/API/employees/updateManager/{id}")
-    public ResponseEntity<Employee> updateManager(@RequestParam Employee manager, @PathVariable Integer id){
-        return new ResponseEntity<>(service.updateManager(id,manager), HttpStatus.OK);
-    }
-
     @PutMapping("/API/employees/updateDepartment/{id}")
     public ResponseEntity<Employee> updateDepartment(@RequestParam Integer departmentId, @PathVariable Integer id){
         return new ResponseEntity<>(service.updateDepartment(id, departmentId), HttpStatus.OK);
@@ -124,18 +158,36 @@ public class EmployeeController {
         return new ResponseEntity<>(service.removeEmployeeFromDept(deptNum, newDept),HttpStatus.OK);
     }
 
-    @PutMapping("/API/employees/changeManager/{oldId}")
-    public ResponseEntity<List<Employee>> changeManager(@PathVariable Integer oldId, @RequestParam Integer newId){
-        return new ResponseEntity<>(service.changeEmployeeManager(oldId,newId),HttpStatus.OK);
+    @PutMapping("/API/employees/updateManager/{id}")
+    public ResponseEntity<List<Employee>> updateManager(@RequestParam Integer managerId,@PathVariable Integer id){
+        return new ResponseEntity<>(service.updateManager(id,managerId), HttpStatus.OK);
+    }
+
+    @PutMapping("/API/employees/nextInLine/{id}")
+    public ResponseEntity<List<Employee>> removeManagerAndSwap(@PathVariable Integer id){
+        return new ResponseEntity<>(service.changeManagerToNextInLine(id), HttpStatus.OK);
+    }
+
+    @PutMapping("/API/mergeDepartments")
+    public ResponseEntity<Boolean> mergeDepartmen(@RequestParam Integer previousDeptId, @PathVariable Integer deptToMergeInto){
+        return new ResponseEntity<>(service.mergeTwoDepartments(previousDeptId,deptToMergeInto), HttpStatus.OK);
     }
 
     // DELETE
     //===============================================================================================================
-    @DeleteMapping("/API/employees/{id}")
-    public ResponseEntity<Boolean> deleteEmployee(@PathVariable Integer id){
-        return new ResponseEntity<>(service.deleteEmployee(id), HttpStatus.NOT_FOUND);
+    @DeleteMapping("/API/employees/remove/{id}")
+    public ResponseEntity<?> deleteEmployee(@PathVariable Integer id){
+        Optional<Employee> currentEmp = service.findEmpById(id);
+        return currentEmp.map(e -> {
+                    service.delete(e.getId());
+                    return ResponseEntity.ok().build();
+                }).orElse(ResponseEntity.notFound().build());
     }
 
+    @DeleteMapping("/API/employees/removeAll/{employeeIds}")
+    public ResponseEntity<Boolean> deleteAllEmployee(@PathVariable List<Integer> employeeIds){
+        return new ResponseEntity<>(service.removeMultipleEmployees(employeeIds), HttpStatus.NOT_FOUND);
+    }
 
 }
 

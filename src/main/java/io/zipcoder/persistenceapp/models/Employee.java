@@ -1,7 +1,6 @@
 package io.zipcoder.persistenceapp.models;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 
 @Entity
 public class Employee {
@@ -16,8 +15,8 @@ public class Employee {
     private String email;
     private String hireDate;
 
-    @JoinColumn(name = "dept_number")
-    private Integer dept_number;
+    @JoinColumn(name = "dept_num")
+    private Integer deptNum;
 
     @ManyToOne
     private Employee  manager;
@@ -33,7 +32,28 @@ public class Employee {
         this.email = email;
         this.hireDate = hireDate;
         this.manager = managerId;
-        this.dept_number = departmentNumber;
+        this.deptNum = departmentNumber;
+    }
+
+    public Employee(Integer id, String firstName, String lastName, String title, String phoneNumber, String email, String hireDate,Integer departmentNumber) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.title = title;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+        this.hireDate = hireDate;
+        this.deptNum = departmentNumber;
+    }
+
+    public Employee(String firstName, String lastName, String title, String phoneNumber, String email, String hireDate,Integer departmentNumber) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.title = title;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+        this.hireDate = hireDate;
+        this.deptNum = departmentNumber;
     }
 
     public Integer getId() {
@@ -105,10 +125,10 @@ public class Employee {
     }
 
     public void setDepartmentNumber(Integer departmentNumber) {
-        this.dept_number = departmentNumber;
+        this.deptNum = departmentNumber;
     }
 
     public Integer getDepartmentNumber() {
-        return dept_number;
+        return deptNum;
     }
 }
