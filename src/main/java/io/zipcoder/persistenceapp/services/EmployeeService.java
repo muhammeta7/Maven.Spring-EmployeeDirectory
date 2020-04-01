@@ -1,13 +1,14 @@
 package io.zipcoder.persistenceapp.services;
 
-import io.zipcoder.persistenceapp.models.Department;
 import io.zipcoder.persistenceapp.models.Employee;
-import io.zipcoder.persistenceapp.repositories.EmployeeRepository;
 import io.zipcoder.persistenceapp.repositories.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,43 +37,43 @@ public class EmployeeService {
     // PUT - Update other employee fields
     //===============================================================================================================
     public Employee updateFirstName(Integer id, String first){
-        Employee originalEmployee = repo.findOne(id);
+        Employee originalEmployee = repo.findEmployeeById(id);
         originalEmployee.setFirstName(first);
         return repo.save(originalEmployee);
     }
 
     public Employee updateLastName(Integer id, String last){
-        Employee originalEmployee = repo.findOne(id);
+        Employee originalEmployee = repo.findEmployeeById(id);
         originalEmployee.setLastName(last);
         return repo.save(originalEmployee);
     }
 
     public Employee updateTitle(Integer id, String title){
-        Employee originalEmployee = repo.findOne(id);
+        Employee originalEmployee = repo.findEmployeeById(id);
         originalEmployee.setTitle(title);
         return repo.save(originalEmployee);
     }
 
     public Employee updatePhoneNum(Integer id, String num){
-        Employee originalEmployee = repo.findOne(id);
+        Employee originalEmployee = repo.findEmployeeById(id);
         originalEmployee.setPhoneNumber(num);
         return repo.save(originalEmployee);
     }
 
     public Employee updateEmail(Integer id, String email){
-        Employee originalEmployee = repo.findOne(id);
+        Employee originalEmployee = repo.findEmployeeById(id);
         originalEmployee.setPhoneNumber(email);
         return repo.save(originalEmployee);
     }
 
     public Employee updateHireDate(Integer id, String hireDate){
-        Employee originalEmployee = repo.findOne(id);
+        Employee originalEmployee = repo.findEmployeeById(id);
         originalEmployee.setHireDate(hireDate);
         return repo.save(originalEmployee);
     }
 
     public Employee updateDepartment(Integer id, Integer departmentId){
-        Employee originalEmployee = repo.findOne(id);
+        Employee originalEmployee = repo.findEmployeeById(id);
         originalEmployee.setDepartmentNumber(departmentId);
         return repo.save(originalEmployee);
     }
@@ -80,9 +81,9 @@ public class EmployeeService {
     // Update an employee to set their manager
     public List<Employee> updateManager(Integer id, Integer managerId){
         List<Employee> employeeList = repo.findAllByManagerId(id);
-        Employee newManager = repo.findOne(managerId);
+        Employee newManager = repo.findEmployeeById(managerId);
         employeeList.forEach(e -> e.setManager(newManager));
-        repo.save(employeeList);
+        repo.saveAll(employeeList);
         return employeeList;
     }
 
@@ -93,16 +94,20 @@ public class EmployeeService {
     //  Update an employee to set their manager
     public List<Employee> changeEmployeeManager(Integer oldId, Integer newId){
         List<Employee> employeeList = repo.findAllByManagerId(oldId);
-        Employee newManager = repo.findOne(newId);
+        Employee newManager = repo.findEmployeeById(newId);
         employeeList.forEach(e -> e.setManager(newManager));
-        repo.save(employeeList);
+        repo.saveAll(employeeList);
         return employeeList;
     }
 
     // GET
     //===============================================================================================================
-    public Employee findEmployeeById(Integer id){
-        return repo.findOne(id);
+    public Optional<Employee> findEmpById(Integer id){
+        return Optional.ofNullable(repo.findEmployeeById(id));
+    }
+
+    public Employee findEmployee(Integer id){
+        return repo.findEmployeeById(id);
     }
 
     public Iterable<Employee> findAllEmployees(){
@@ -110,19 +115,19 @@ public class EmployeeService {
     }
 
     public Employee getManager(Integer id){
-        return repo.findOne(id).getManager();
+        return repo.findEmployeeById(id).getManager();
     }
 
     public Integer getDepartment(Integer id){
-        return repo.findOne(id).getDepartmentNumber();
+        return repo.findEmployeeById(id).getDepartmentNumber();
     }
 
     public String getTitle(Integer id){
-        return repo.findOne(id).getTitle();
+        return repo.findEmployeeById(id).getTitle();
     }
 
     public String getEmail(Integer id){
-        return repo.findOne(id).getEmail();
+        return repo.findEmployeeById(id).getEmail();
     }
 
     public List<Employee> getEmployeesWhereManagerIsNull(){
@@ -160,7 +165,7 @@ public class EmployeeService {
     // Get Employee Hierarchy
     public ArrayList<Employee> findHierarchy(Integer id) {
         ArrayList<Employee> managers = new ArrayList<>();
-        Employee employee = findEmployeeById(id);
+        Employee employee = findEmployee(id);
         while (employee.getManager() != null) {
             Employee manager = employee.getManager();
             managers.add(manager);
@@ -187,6 +192,7 @@ public class EmployeeService {
         return true;
     }
 
+
     // Merge Departments
     public Boolean mergeTwoDepartments(Integer depToRemove, Integer depToMergeInto){
         Employee previousManager = depService.findDepartmentById(depToRemove).getDeptManager();
@@ -204,7 +210,7 @@ public class EmployeeService {
     //===============================================================================================================
     // Remove one employee
     public Boolean deleteEmployee(Integer id){
-        repo.delete(id);
+        repo.deleteById(id);
         return true;
     }
 

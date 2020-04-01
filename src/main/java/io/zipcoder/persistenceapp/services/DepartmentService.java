@@ -20,7 +20,7 @@ public class DepartmentService {
 
     // GET
     public Department findDepartmentById(Integer id){
-        return repo.findOne(id);
+        return repo.findDepartmentByDeptNum(id);
     }
 
     public Iterable<Department> findAll(){
@@ -31,14 +31,14 @@ public class DepartmentService {
     //===============================================================================================================
     // Update the department number
     public Department updateDepartmentNum(Integer id, Integer value){
-        Department originalDept = repo.findOne(id);
+        Department originalDept = repo.findDepartmentByDeptNum(id);
         originalDept.setDept_num(value);
         return repo.save(originalDept);
     }
 
     // Change the name of a department
     public Department updateDepartmentName(Integer id, String value){
-        Department originalDept = repo.findOne(id);
+        Department originalDept = repo.findDepartmentByDeptNum(id);
         originalDept.setDept_name(value);
         return repo.save(originalDept);
     }
@@ -46,8 +46,8 @@ public class DepartmentService {
     // Add Department manager
     public Department addDeptManager(Integer deptId, Integer managerId){
         EmployeeService service = new EmployeeService();
-        Department department = repo.findOne(deptId);
-        Employee manager = service.findEmployeeById(managerId);
+        Department department = repo.findDepartmentByDeptNum(deptId);
+        Employee manager = service.findEmployee(managerId);
         department.setDeptManager(manager);
         return repo.save(department);
     }
@@ -55,8 +55,8 @@ public class DepartmentService {
     // Update Department Manager
     public Department changeDepartmentManager(Integer id, Integer managerId){
         EmployeeService service = new EmployeeService();
-        Department original = repo.findOne(id);
-        Employee manager = service.findEmployeeById(managerId);
+        Department original = repo.findDepartmentByDeptNum(id);
+        Employee manager = service.findEmployee(managerId);
         original.setDeptManager(manager);
         return repo.save(original);
     }
@@ -65,7 +65,7 @@ public class DepartmentService {
     //===============================================================================================================
     // Delete a department
     public Boolean deleteDepartment(Integer id){
-        repo.delete(id);
+        repo.deleteById(id);
         return true;
     }
 

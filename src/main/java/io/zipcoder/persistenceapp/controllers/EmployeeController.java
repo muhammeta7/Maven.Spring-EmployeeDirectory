@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.Optional;
 
 @RestController
 public class EmployeeController {
@@ -28,8 +28,8 @@ public class EmployeeController {
     // GET
     //===============================================================================================================
     @GetMapping("/API/employees/{id}")
-    public ResponseEntity<Employee> findEmployeeById(@PathVariable Integer id){
-        return new ResponseEntity<>(service.findEmployeeById(id), HttpStatus.OK);
+    public ResponseEntity<Optional<Employee>> findEmployeeById(@PathVariable Integer id){
+        return new ResponseEntity<>(service.findEmpById(id), HttpStatus.OK);
     }
 
     @GetMapping("/API/employees/")
