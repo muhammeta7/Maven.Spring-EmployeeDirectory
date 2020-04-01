@@ -29,7 +29,7 @@ public class DepartmentService {
 
     // PUT
     //===============================================================================================================
-    // Change update the department
+    // Update the department number
     public Department updateDepartmentNum(Integer id, Integer value){
         Department originalDept = repo.findOne(id);
         originalDept.setDept_num(value);
@@ -43,15 +43,23 @@ public class DepartmentService {
         return repo.save(originalDept);
     }
 
+    // Add Department manager
+    public Department addDeptManager(Integer deptId, Integer managerId){
+        EmployeeService service = new EmployeeService();
+        Department department = repo.findOne(deptId);
+        Employee manager = service.findEmployeeById(managerId);
+        department.setDeptManager(manager);
+        return repo.save(department);
+    }
+
     // Update Department Manager
-    public Department changeManager(Integer id, Integer managerId){
+    public Department changeDepartmentManager(Integer id, Integer managerId){
         EmployeeService service = new EmployeeService();
         Department original = repo.findOne(id);
         Employee manager = service.findEmployeeById(managerId);
         original.setDeptManager(manager);
         return repo.save(original);
     }
-
 
     //DELETE
     //===============================================================================================================

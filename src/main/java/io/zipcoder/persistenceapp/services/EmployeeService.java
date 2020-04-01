@@ -1,22 +1,31 @@
 package io.zipcoder.persistenceapp.services;
 
+import io.zipcoder.persistenceapp.models.Department;
 import io.zipcoder.persistenceapp.models.Employee;
 import io.zipcoder.persistenceapp.repositories.EmployeeRepository;
 import io.zipcoder.persistenceapp.repositories.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class EmployeeService {
 
-    @Autowired
+
     private EmployeeRepository repo;
+    private DepartmentService depService;
+
+    @Autowired
+    public EmployeeService(EmployeeRepository employeeRepository, DepartmentService departmentService){
+        this.repo = employeeRepository;
+        this.depService = departmentService;
+    }
+
+    public EmployeeService(){
+
+    }
 
     // POST - Create employee
     //===============================================================================================================
@@ -69,11 +78,18 @@ public class EmployeeService {
     }
 
     // Update an employee to set their manager
-    public Employee updateManager(Integer id, Integer managerId){
-        Employee originalEmployee = repo.findOne(id);
-        originalEmployee.setManager(repo.findOne(managerId));
-        return repo.save(originalEmployee);
+    public List<Employee> updateManager(Integer id, Integer managerId){
+        List<Employee> employeeList = repo.findAllByManagerId(id);
+        Employee newManager = repo.findOne(managerId);
+        employeeList.forEach(e -> e.setManager(newManager));
+        repo.save(employeeList);
+        return employeeList;
     }
+
+    public List<Employee> changeManagerToNextInLine(Integer managerId){
+        return updateManager(managerId, getManager(managerId).getId());
+    }
+
     //  Update an employee to set their manager
     public List<Employee> changeEmployeeManager(Integer oldId, Integer newId){
         List<Employee> employeeList = repo.findAllByManagerId(oldId);
@@ -82,9 +98,6 @@ public class EmployeeService {
         repo.save(employeeList);
         return employeeList;
     }
-
-
-
 
     // GET
     //===============================================================================================================
@@ -110,6 +123,10 @@ public class EmployeeService {
 
     public String getEmail(Integer id){
         return repo.findOne(id).getEmail();
+    }
+
+    public List<Employee> getEmployeesWhereManagerIsNull(){
+        return repo.findEmployeesByManagerIsNull();
     }
 
     // Get the list of employees of a particular department
@@ -153,21 +170,12 @@ public class EmployeeService {
     }
 
     // Get Employees By Indirect
-    public Set<Employee> findAllByManagerIncIndirect(Integer managerId) {
-        Set<Employee> employees = new TreeSet<>();
-        for (Employee employee : findAllEmployees()) {
-            if (findHierarchy(employee.getId()).contains(findEmployeeById(managerId))) {
-                employees.add(employee);
-            }
+    public HashSet<Employee> findAllDirectAndIndirectReports(Integer managerId){
+        ArrayList<Employee> resultList = new ArrayList<>(getEmployeesByManagerId(managerId));
+        for (int i = 0; i < resultList.size(); i++) {
+            resultList.addAll(findAllDirectAndIndirectReports(resultList.get(i).getId()));
         }
-        return employees;
-    }
-
-    // DELETE - Remove a particular employee
-    //===============================================================================================================
-    public Boolean deleteEmployee(Integer id){
-        repo.delete(id);
-        return true;
+        return new HashSet<>(resultList);
     }
 
     // Remove a particular employee or list of employees
@@ -179,5 +187,36 @@ public class EmployeeService {
         return true;
     }
 
+    // Merge Departments
+    public Boolean mergeTwoDepartments(Integer depToRemove, Integer depToMergeInto){
+        Employee previousManager = depService.findDepartmentById(depToRemove).getDeptManager();
+        Employee newManager = depService.findDepartmentById(depToMergeInto).getDeptManager();
+        List<Employee> prevDeptEmployees = getEmployeesByDepartment(depToRemove);
+        for(Employee e : prevDeptEmployees){
+            e.setDepartmentNumber(depToMergeInto);
+            repo.save(e);
+        }
+        changeEmployeeManager(previousManager.getId(), newManager.getId());
+        return true;
+    }
+
+    // DELETE - Remove a particular employee
+    //===============================================================================================================
+    // Remove one employee
+    public Boolean deleteEmployee(Integer id){
+        repo.delete(id);
+        return true;
+    }
+
+    // Remove List of people
+    public Boolean removeMultipleEmployees(List<Integer> list){
+        Iterable<Employee> employees = findAllEmployees();
+        for(Employee e : employees ){
+            if(list.contains(e.getId())){
+                repo.delete(e);
+            }
+        }
+        return true;
+    }
 
 }

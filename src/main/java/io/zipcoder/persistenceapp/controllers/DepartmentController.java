@@ -37,14 +37,19 @@ public class DepartmentController {
         return new ResponseEntity<>(service.updateDepartmentNum(id,num), HttpStatus.OK);
     }
 
-    @PutMapping("/API/employees/updateDeptName/{id}")
+    @PutMapping("/API/departments/updateDeptName/{id}")
     public ResponseEntity<Department> updateLast(@RequestParam String name, @PathVariable Integer id){
         return new ResponseEntity<>(service.updateDepartmentName(id,name), HttpStatus.OK);
     }
 
-    @PutMapping("/API/dept/updateManager/{deptId}")
+//    @PutMapping("API/departments/addManager/{id}")
+//    public ResponseEntity<> addManager(@RequestParam Integer id){
+//
+//    }
+
+    @PutMapping("/API/departments/updateManager/{deptId}")
     public ResponseEntity<Department> updateManager(@RequestParam Integer managerId, @PathVariable Integer deptId){
-        return new ResponseEntity<>(service.changeManager(deptId,managerId), HttpStatus.OK);
+        return new ResponseEntity<>(service.changeDepartmentManager(deptId,managerId), HttpStatus.OK);
     }
 
     // DELETE

@@ -7,7 +7,6 @@ public class Department {
 
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer dept_number;
-
     private String dept_name;
 
     @OneToOne
