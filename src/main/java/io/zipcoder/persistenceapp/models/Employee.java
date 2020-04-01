@@ -46,6 +46,16 @@ public class Employee {
         this.deptNum = departmentNumber;
     }
 
+    public Employee(String firstName, String lastName, String title, String phoneNumber, String email, String hireDate,Integer departmentNumber) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.title = title;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+        this.hireDate = hireDate;
+        this.deptNum = departmentNumber;
+    }
+
     public Integer getId() {
         return id;
     }

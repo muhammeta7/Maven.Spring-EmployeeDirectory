@@ -209,7 +209,7 @@ public class EmployeeService {
     // DELETE - Remove a particular employee
     //===============================================================================================================
     // Remove one employee
-    public Boolean deleteEmployee(Integer id){
+    public Boolean delete(Integer id){
         repo.deleteById(id);
         return true;
     }
