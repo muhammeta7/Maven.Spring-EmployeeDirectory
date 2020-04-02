@@ -103,15 +103,15 @@ public class EmployeeService {
     // GET
     //===============================================================================================================
     public Optional<Employee> findEmpById(Integer id){
-        return Optional.ofNullable(repo.findEmployeeById(id));
+        return repo.findById(id);
     }
 
     public Employee findEmployee(Integer id){
         return repo.findEmployeeById(id);
     }
 
-    public Iterable<Employee> findAllEmployees(){
-        return repo.findAll();
+    public List<Employee> findAllEmployees(){
+        return (List<Employee>) repo.findAll();
     }
 
     public Employee getManager(Integer id){
