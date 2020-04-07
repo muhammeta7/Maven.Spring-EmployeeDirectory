@@ -1,4 +1,4 @@
-package io.zipcoder.persistenceapp;
+package io.zipcoder.persistenceapp.controllers;
 
 import io.zipcoder.persistenceapp.models.Employee;
 import io.zipcoder.persistenceapp.services.EmployeeService;

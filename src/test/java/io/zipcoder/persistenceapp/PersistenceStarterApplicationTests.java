@@ -1,4 +1,4 @@
-package io.zipcoder;
+package io.zipcoder.persistenceapp;
 
 
 import org.junit.jupiter.api.Test;

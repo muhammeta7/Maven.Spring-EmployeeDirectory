@@ -1,7 +1,7 @@
 package io.zipcoder.persistenceapp.services;
 
-import io.zipcoder.persistenceapp.models.Department;
 import io.zipcoder.persistenceapp.models.Employee;
+import io.zipcoder.persistenceapp.models.Department;
 import io.zipcoder.persistenceapp.repositories.DepartmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
